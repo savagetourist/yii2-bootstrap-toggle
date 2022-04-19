@@ -1,5 +1,5 @@
 {
-    "name": "loveorigami/yii2-bootstrap-toggle",
+    "name": "savagetourist/yii2-bootstrap-toggle",
     "description": "Yii2 bootstrap-toggle widget",
     "type": "yii2-extension",
     "keywords": ["yii2","bootstrap","toggle","widget"],
@@ -8,6 +8,7 @@
 		{
             "name": "Andrey Lukyanov",
             "email": "loveorigami@mail.ru"
+	    "editor": "Andrey Atyashov",
         }
     ],
     "minimum-stability": "dev",
@@ -20,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "lo\\widgets\\": ""
+            "st\\widgets\\": ""
         }
     }
 }
