@@ -4,7 +4,7 @@
  * @license http://opensource.org/licenses/BSD-3-Clause
  */
  
-namespace lo\widgets;
+namespace st\widgets;
 
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
