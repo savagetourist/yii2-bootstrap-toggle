@@ -14,13 +14,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist loveorigami/yii2-bootstrap-toggle "*"
+php composer.phar require --prefer-dist savagetourist/yii2-bootstrap-toggle "*"
 ```
 
 or add
 
 ```
-"loveorigami/yii2-bootstrap-toggle": "*"
+"savagetourist/yii2-bootstrap-toggle": "*"
 ```
 
 to the require section of your composer.json.
@@ -30,7 +30,7 @@ General Usage
 -------------
 
 ```php
-use lo\widgets\Toggle;
+use st\widgets\Toggle;
 
 Toggle::widget(
     [
