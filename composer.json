@@ -7,8 +7,8 @@
     "authors": [
 		{
             "name": "Andrey Lukyanov",
-            "email": "loveorigami@mail.ru"
-	    "editor": "Andrey Atyashov",
+            "email": "loveorigami@mail.ru",
+	    "editor": "Andrey Atyashov"
         }
     ],
     "minimum-stability": "dev",
