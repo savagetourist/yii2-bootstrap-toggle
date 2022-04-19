@@ -1,6 +1,6 @@
 <?php
 
-namespace lo\widgets;
+namespace st\widgets;
 
 use yii\web\AssetBundle;
 
@@ -18,6 +18,6 @@ class ToggleAsset extends AssetBundle
 	
     public $depends = [
         'yii\web\JqueryAsset',
-        'yii\bootstrap\BootstrapAsset'
+        'yii\bootstrap4\BootstrapAsset'
     ];
 }
