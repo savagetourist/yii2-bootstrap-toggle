@@ -72,21 +72,12 @@ class Toggle extends InputWidget
 	public $inlineLabel = true;
 
 	/**
-	 * Set these parameters to work with status changes by passing them to this method in the view
-	 * @param int $toggleStatusDeleted set your STATUS_DELETED constant. You can not use 3 statuses, only active and inactive
-	 * @param int $toggleStatusInactive set your STATUS_INACTIVE constant
-	 * @param string $toggleActionStatusUrl set your processing request action url
-	 * @param string $toggleModelName set item model name. Its need only for in output message to console
-	 *
+	 * Call function setToggleParameters on page where use Toglles with model update
 	 */
 
-	public function setToggleParameters($toggleStatusDeleted = 2, $toggleStatusInactive = 1, $toggleActionStatusUrl = 'status', $toggleModelName = 'Item')
+	public static function setToggleParameters()
 	{
 		$view = Yii::$app->view;
-		$view->registerJs('let toggleStatusDeleted = \'' . $toggleStatusDeleted . '\',
-					toggleStatusInactive = \'' . $toggleStatusInactive . '\',
-					toggleActionStatusUrl = \'' . $toggleActionStatusUrl . '\',
-					toggleModelName = \'' . $toggleModelName . '\';');
 
 		$changeStatusUsingAction = <<<JS
 		/** EVENT: TRASH */
@@ -94,6 +85,10 @@ class Toggle extends InputWidget
 			var toggleLabel = $(this).prev('label'),
 				toggle = toggleLabel.find('input'),
 				id = toggle.attr('data-item'),
+				itemName = toggle.attr('data-name'),
+				toggleUrl = toggle.attr('data-url'),
+				statusDeleted = toggle.attr('data-deleted'),
+				statusBlocked = toggle.attr('data-blocked'),
 				dataId = toggle.attr('id'),
 				status = toggle.attr('data-status');
 				data = {
@@ -104,13 +99,13 @@ class Toggle extends InputWidget
 				}
 				
 			if (toggle.attr('disabled')) {
-				console.log(toggleModelName + ' has already been deleted.');
+				console.log(itemName + ' has already been deleted.');
 				return false;
 			}
 			else{
 				if (confirm('Are you sure you want to delete this item?')){
 					$.ajax({
-					url: toggleActionStatusUrl,
+					url: toggleUrl,
 					type: 'post',
 					data: data
 					})
@@ -121,10 +116,10 @@ class Toggle extends InputWidget
 							$('#' + data.dataId).parent('.toggle').addClass('btn-danger off deleted');
 							$('#' + data.dataId).next('.toggle-group').find('.toggle-off').html('<i class="fa fa-trash"></i>');
 							$('#' + data.dataId).parent('.toggle').removeClass('btn-success');
-							console.log(toggleModelName + ' ' + data.id + ' has been deleted');
+							console.log(itemName + ' ' + data.id + ' has been deleted');
 						}
 						else {
-							console.log(toggleModelName + ' has already been deleted.');
+							console.log(itemName + ' has already been deleted.');
 						}
 					})
 					.fail(function(){
@@ -136,12 +131,15 @@ class Toggle extends InputWidget
 		
 		/** EVENT: RECOVERY */
 		$('.toggle').click(function (){
-			var toggle = $(this).find('input');
-			// console.log(toggle.next('.toggle-group').find('.toggle-off').html());
-			if (toggle.attr('disabled') && toggle.attr('data-status') == toggleStatusDeleted){
+			var toggle = $(this).find('input'),
+				itemName = toggle.attr('data-name'),
+				toggleUrl = toggle.attr('data-url'),
+				statusDeleted = toggle.attr('data-deleted'),
+				statusBlocked = toggle.attr('data-blocked');
+			if (toggle.attr('disabled') && toggle.attr('data-status') == statusDeleted){
 				toggle.next('.toggle-group').find('.toggle-off').html('<i class="fa fa-pause"></i>');
 				$(this).removeClass('deleted');
-				toggle.attr('data-status', toggleStatusInactive);
+				toggle.attr('data-status', statusBlocked);
 				toggle.bootstrapToggle('enable');
 				toggle.bootstrapToggle('off');
 			}
@@ -149,20 +147,24 @@ class Toggle extends InputWidget
 		
 		/** EVENT: CHANGE STATUS (TOGGLE) */
 		$('input[id*="toggle-"]').change(function(){
-			$(this).bootstrapToggle('disable');
-			if ($(this).attr('data-status') == toggleStatusDeleted){
-				$(this).bootstrapToggle('destroy');
-				$(this).bootstrapToggle('off');
-				$(this).prev('.toggle').removeClass('deleted');
-			}
-			var dataItem = $(this).attr('data-item'),
+				var dataItem = $(this).attr('data-item'),
 				dataId = $(this).attr('id'),
 				data = {
 				'id': dataItem,
 				'dataId': dataId
+				},
+				itemName = $(this).attr('data-name'),
+				toggleUrl = $(this).attr('data-url'),
+				statusDeleted = $(this).attr('data-deleted');
+			$(this).bootstrapToggle('disable');
+			if ($(this).attr('data-status') == statusDeleted){
+				$(this).bootstrapToggle('destroy');
+				$(this).bootstrapToggle('off');
+				$(this).prev('.toggle').removeClass('deleted');
 			}
+
 			$.ajax({
-			url: toggleActionStatusUrl,
+			url: toggleUrl,
 			type: 'post',
 			data: data
 			})
@@ -170,7 +172,7 @@ class Toggle extends InputWidget
 				if (data.success){
 					$('#' + data.dataId).attr('data-status', data.status);
 					$('#' + data.dataId).bootstrapToggle('enable');
-					console.log(toggleModelName + ' ' + data.id + ' status has been changed');
+					console.log(itemName + ' ' + data.id + ' status has been changed');
 				}else{
 					console.log('Error: ' + JSON.stringify(data.error));
 				}
@@ -184,6 +186,7 @@ class Toggle extends InputWidget
 		});
 JS;
 		$view->registerJs($changeStatusUsingAction);
+		$view->registerCss('.toggle.deleted{filter: grayscale(1);}');
 	}
 
 	/**
